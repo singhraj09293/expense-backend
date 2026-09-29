@@ -4,7 +4,7 @@ const Expense = require("../models/Expense");
 const auth = require("../middleware/auth");
 
 router.get("/", auth, async (req, res) => {
-    const expense = await Expense.find();
+    const expense = await Expense.find({ userId: req.user.id });
     res.json({ expense });
 });
 
@@ -22,7 +22,10 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
-    const expense = new Expense(req.body);
+    const expense = new Expense({
+        ...req.body,
+        userId: req.user.id
+    });
     await expense.save();
     res.json({ message: "Expense Saved" });
 });
